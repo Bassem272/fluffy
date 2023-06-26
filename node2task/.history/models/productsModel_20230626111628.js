@@ -332,15 +332,11 @@ export default {
     console.log("Fetched data:", id);
 
     try {
-     
-      console.log(id);
-      const products = JSON.parse(await fs.readFile('products.json', 'utf-8'));    
-      // const product = this.getProductById(id);
+      // Fetch the updated product data from an external API or source
+      // const response = await fetch(`https://api.escuelajs.co/api/v1/products/`);
+      // const products = await response.json();
+      
       const product = products.find((p) => p.id === id);
-      if (!product) {
-        return null;
-      }
-     
       const index = products.findIndex((p) => p.id === id);
       if (index === -1) {
         return null;

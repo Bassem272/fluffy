@@ -336,7 +336,7 @@ export default {
       console.log(id);
       const products = JSON.parse(await fs.readFile('products.json', 'utf-8'));    
       // const product = this.getProductById(id);
-      const product = products.find((p) => p.id === id);
+      const product = Pproducts.find((p) => p.id === id);
       if (!product) {
         return null;
       }
