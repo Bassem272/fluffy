@@ -244,7 +244,20 @@ export default {
   // addProduct(product) {
   //   products.push(product);
   // },
-
+  saveProducts(products) {
+    const transProducts = products.map((product) => {
+      return {
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        category_id: product.category,
+      };
+    });
+    console.log('transProducts', "model");
+    fs.writeFile("products.json", JSON.stringify(transProducts), "utf-8");
+    fs.writeFile("output.json", JSON.stringify(products), "utf-8");
+    return transProducts;
+  },
   async readProducts() {
     const products = await fs.readFile("products.json", "utf-8");
     //const products = await fs.readFile('output.json',"utf-8")
@@ -258,23 +271,6 @@ export default {
     console.log(product);
     return product;
   },
-   async saveProducts(products) {
-    const categories = JSON.parse(await fs.readFile('categories.json', 'utf-8'));    const transProducts = products.map((product) => {
-      const category = categories.find((cat) => cat.name === product.category);
-      const category_id = category ? category.id : null;
-  
-      return {
-        id: product.id,
-        title: product.title,
-        price: product.price,
-        category_id: category_id,
-      };
-    });
-    console.log('transProducts', "model");
-    fs.writeFile("products.json", JSON.stringify(transProducts), "utf-8");
-    fs.writeFile("output.json", JSON.stringify(products), "utf-8");
-    return transProducts;
-  },
 
   async addProduct(product) {
     //   const categories = await fs.readFile('categories.json', 'utf-8');
@@ -286,12 +282,12 @@ export default {
       id: parsedProducts.length + 1,
       title: product.title,
       price: product.price,
-      category_id: product.category_id,
+      category_id: product.category,
     };
     console.log(producto);
     parsedProducts.push(producto);
     //////////
-    console.log('parsedProducts', "iiiii");
+    console.log(parsedProducts, "iiiii");
     return parsedProducts;
   },
 
@@ -314,13 +310,9 @@ export default {
       // Update the product fields with the fetched data or use the existing values
       product.title = updatedFields.title || product.title;
       product.price = updatedFields.price || product.price;
-      product.category_id = product.category_id || product.category_id;
+      product.category_id = updatedFields.category_id || product.category_id;
       product.updatedAt = new Date();
       console.log("updated:", product);
-      // const productUpdated = this.addProduct(product)
-      // 
-          const productUpdated1= this.saveProducts( parsedProducts)
-      console.log( productUpdated1)
       return product;
     } catch (error) {
       // Handle any errors that occur during the fetch request

@@ -219,7 +219,10 @@ export default {
   async putCategory(req, res) {
     try {
       productsModel.validCategory(req.body);
-      const id = parseInt(req.params.id);
+    } catch (error) {
+      return res.status(400).send({ error: error.message });
+    }
+    const id = parseInt(req.params.id);
     const { name } = req.body;
    
     const updatedProduct = await productsModel.updateCategory(id, {
@@ -231,10 +234,6 @@ export default {
     } else {
       res.json(updatedProduct);
     }
-    } catch (error) {
-      return res.status(400).send({ error: error.message });
-    }
-    
 
   },
  async deleteCategory(req, res) {

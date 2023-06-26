@@ -258,16 +258,13 @@ export default {
     console.log(product);
     return product;
   },
-   async saveProducts(products) {
-    const categories = JSON.parse(await fs.readFile('categories.json', 'utf-8'));    const transProducts = products.map((product) => {
-      const category = categories.find((cat) => cat.name === product.category);
-      const category_id = category ? category.id : null;
-  
+    saveProducts(products) {
+    const transProducts = products.map((product) => {
       return {
         id: product.id,
         title: product.title,
         price: product.price,
-        category_id: category_id,
+        category_id: product.category,
       };
     });
     console.log('transProducts', "model");
@@ -314,7 +311,7 @@ export default {
       // Update the product fields with the fetched data or use the existing values
       product.title = updatedFields.title || product.title;
       product.price = updatedFields.price || product.price;
-      product.category_id = product.category_id || product.category_id;
+      product.category_id = updatedFields.category_id || product.category_id;
       product.updatedAt = new Date();
       console.log("updated:", product);
       // const productUpdated = this.addProduct(product)

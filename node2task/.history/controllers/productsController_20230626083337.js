@@ -218,8 +218,7 @@ export default {
   },
   async putCategory(req, res) {
     try {
-      productsModel.validCategory(req.body);
-      const id = parseInt(req.params.id);
+      productsModel.validCategory(req.body);const id = parseInt(req.params.id);
     const { name } = req.body;
    
     const updatedProduct = await productsModel.updateCategory(id, {

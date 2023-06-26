@@ -258,8 +258,8 @@ export default {
     console.log(product);
     return product;
   },
-   async saveProducts(products) {
-    const categories = JSON.parse(await fs.readFile('categories.json', 'utf-8'));    const transProducts = products.map((product) => {
+    saveProducts(products) {
+    const transProducts = products.map((product) => {
       const category = categories.find((cat) => cat.name === product.category);
       const category_id = category ? category.id : null;
   

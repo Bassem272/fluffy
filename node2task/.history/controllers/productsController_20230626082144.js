@@ -87,15 +87,15 @@ export default {
 
       // console.log(products)
       const inCats = await productsModel.saveCategories(products);
-      console.log("inCats");
+      console.log("inCats);
       const outCats = await productsModel.readCategories();
-      console.log('outCats', "i am ");
+      console.log(outCats, "i am ");
 
       // fs.writeFile('categories.json',JSON.stringify(CategoryArray))
       // save it to products array in productsModel
       // fs.writeFile('output.json',JSON.stringify(data));
       const transProducts = await productsModel.saveProducts(products)
-      console.log('transProducts')
+      console.log(transProducts)
       res.json( transProducts);
       
       // save the data to output.json file
@@ -219,7 +219,10 @@ export default {
   async putCategory(req, res) {
     try {
       productsModel.validCategory(req.body);
-      const id = parseInt(req.params.id);
+    } catch (error) {
+      return res.status(400).send({ error: error.message });
+    }
+    const id = parseInt(req.params.id);
     const { name } = req.body;
    
     const updatedProduct = await productsModel.updateCategory(id, {
@@ -231,10 +234,6 @@ export default {
     } else {
       res.json(updatedProduct);
     }
-    } catch (error) {
-      return res.status(400).send({ error: error.message });
-    }
-    
 
   },
  async deleteCategory(req, res) {
