@@ -64,8 +64,10 @@ export default {
     console.log(decoded.iat,"authenticated token") 
     // Verify token and extract username
   //   jwt.verify(token, secretKey, (error, decoded) => {
- 
-  
+  //     if (error) {
+  //       return res.status(403).json({ message: 'Invalid token' });
+  //     }
+  //     req.username = decoded.username;
       next();
     },
   
@@ -221,7 +223,7 @@ async addCategory(name) {
   // addProduct(product) {
   //   products.push(product);
   // }, 
-  saveProducts(products) {
+async   saveProducts(products) {
     const transProducts = products.map(product => {
       return {
         id: product.id,
@@ -229,21 +231,18 @@ async addCategory(name) {
         price: product.price,
         category_id: product.category
       }});
-      console.log(transProducts,'model')
-       fs.writeFile('products.json',JSON.stringify(transProducts),'utf-8')
-     fs.writeFile('output.json',JSON.stringify(products),'utf-8');
-    return transProducts;
+      await fs.writeFileAsync
+   await  fs.writeFileAsync('output.json',JSON.stringify(products));
+    return products,transProducts;
   },
   async readProducts(){
-    const products = await fs.readFile('products.json',"utf-8")
-    //const products = await fs.readFile('output.json',"utf-8")
+    const products = await fs.readFile('output.json',"utf-8")
    return JSON.parse(products)|| [];
   },
 
 
  async getProduct(id){
-  const products = await fs.readFile('products.json','utf-8');
-  //const products = await fs.readFile('output.json');
+  const products = await fs.readFile('output.json');
   const product = JSON.parse(products).find(p => p.id === id);
   console.log(product)
   return product;

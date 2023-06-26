@@ -71,11 +71,19 @@ export default {
     }
   },
 
+  /**
+   * Asynchronously retrieves all products from the fakestoreapi.com/products endpoint,
+   * saves them to the database, and returns the transformed products.
+   *
+   * @param {Object} req - Express request object.
+   * @param {Object} res - Express response object.
+   * @return {Array} An array of transformed products.
+   */
   async getAllProducts(req, res) {
     try {
       const response = await fetch("https://fakestoreapi.com/products");
       const products = await response.json();
-      productsModel.setProducts(products);
+      // productsModel.setProducts(products);
 
       // console.log(products)
       const inCats = await productsModel.saveCategories(products);
@@ -86,11 +94,23 @@ export default {
       // fs.writeFile('categories.json',JSON.stringify(CategoryArray))
       // save it to products array in productsModel
       // fs.writeFile('output.json',JSON.stringify(data));
-      res.json(productsModel.saveProducts(products)); // save the data to output.json file
+      const transProducts = await productsModel.saveProducts(products)
+      console.log(transProducts)
+      res.json( transProducts);
+      
+      // save the data to output.json file
     } catch (error) {
       res.status(500).json({ error: "Error fetching products" });
     }
   },
+  
+  /**
+   * Asynchronously retrieves all categories and sends them back as a JSON response.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} res - The response object.
+   * @return {Promise<void>} A promise that resolves with the JSON response of categories.
+   */
   async getAllCategories(req, res) {
     try {
       const outCats = await productsModel.readCategories();
@@ -225,25 +245,61 @@ export default {
     }
     
   },
-  async updateProduct(req, res) {
+  async createProduct(req, res) {
     try {
-      productsModel.validate2(req.body);
+      productsModel.validateProduct(req.body);
+      const category_id = req.body.category_id;
+      console.log(category_id);
+     const check = await productsModel.checkCategory(category_id);
+     if (check === false){
+      return res.status(400).send({error: 'category not found'})
+     }
+     const product = req.body;
+     console.log(product);
+const newProducts = await productsModel.addProduct(product)
+console.log(newProducts)
+productsModel.saveProducts(newProducts)
+ res.status(201).json({newProducts,product});
     } catch (error) {
       return res.status(400).send({ error: error.message });
     }
-    const id = parseInt(req.params.id);
-    const { title, price } = req.body;
+    
+
+   
+
+  
+
+   
+  },
+  async updateProduct(req, res) {
+    try {
+      productsModel.validateProduct(req.body);
+      const { title, price ,category_id} = req.body;
+      const check = await productsModel.checkCategory(category_id);
+      if (check === false){
+       return res.status(400).send({error: 'category not found'})
+      }
+      const id = parseInt(req.params.id);
 
     const updatedProduct = await productsModel.updateProduct(id, {
       title,
       price,
+      category_id
     });
     console.log("update :", updatedProduct);
     if (!updatedProduct) {
       res.status(404).json({ error: "Product not found" });
     } else {
       res.json(updatedProduct);
+//       const newProducts = await productsModel.addProduct(updatedProduct)
+// console.log(newProducts)
+// productsModel.saveProducts(newProducts)
+//  res.status(201).json({newProducts,product});
     }
+    } catch (error) {
+      return res.status(400).send({ error: error.message });
+    }
+    
   },
 
   async deleteProduct(req, res) {
